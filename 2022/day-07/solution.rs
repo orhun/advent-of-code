@@ -64,7 +64,7 @@ impl Directory {
                     sum += directories
                         .iter()
                         .find(|dir| dir.name == entry.name)
-                        .unwrap()
+                        .expect("failed to find directory")
                         .calculate_size(directories)
                 }
                 EntryType::File(size) => sum += size,
@@ -114,7 +114,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut current_command = Command::Unknown;
     for line in input.lines() {
         if line.starts_with('$') {
-            current_command = Command::from_str(line).unwrap();
+            current_command = Command::from_str(line).expect("failed to parse command");
         }
         match current_command {
             Command::ChangeDirectory(ref name) => {
@@ -132,7 +132,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 if line.starts_with('$') {
                     continue;
                 }
-                let mut entry = Entry::new(line).unwrap();
+                let mut entry = Entry::new(line).expect("failed to parse entry");
                 entry.name = current_level.join(entry.name).to_string_lossy().to_string();
                 current_directory.entries.push(entry);
             }
@@ -159,7 +159,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         total_sizes
             .iter()
             .find(|v| *v + 70000000 - total_sizes[total_sizes.len() - 1] > 30000000)
-            .unwrap()
+            .expect("failed to solve part2")
     );
 
     Ok(())
